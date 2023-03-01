@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>replit</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <h3>Upload do arquivo com as informações</h3>
+  <input type="file" id="arquivo" onChange="handleFile(this.files)">
+</body>
+
+<script>
+  var objectJson;
+
+  //Lendo o arquivo JSON
+  function handleFile(files) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      let data = event.target.result;
+      objectJson = JSON.parse(data);
+      atualizaValores(objectJson);
+    }
+    reader.readAsText(files[0]);
+  };
+
+  //Atualizando a variavel objectJson
+  function atualizaValores(object) {
+    objectJson = object;
+    contabilizaMedia();
+  }
+
+  //Contabilizando a Média
+  function contabilizaMedia() {
+    let totalMensal = 0, diasComValor = 0, menor_valor_mensal = 1000000000, maior_valor_mensal = 0, dias_acima_do_fat_medio = 0, faturamento_medio = 0;
+
+    //Percorrendo o JSON
+    for (let i = 0; i < objectJson.length; i++) {
+      if (objectJson[i].valor != 0) {
+        totalMensal = totalMensal + objectJson[i].valor;
+        diasComValor++;
+      }
+    }
+    faturamento_medio = totalMensal / diasComValor;
+
+    for (let i = 0; i < objectJson.length; i++) {
+      if (objectJson[i].valor >= faturamento_medio){
+        dias_acima_do_fat_medio++;
+      }
+      if (objectJson[i].valor > maior_valor_mensal){
+        maior_valor_mensal = objectJson[i].valor;
+      }
+      if ((objectJson[i].valor < menor_valor_mensal) && (objectJson[i].valor != 0)){
+        menor_valor_mensal = objectJson[i].valor;
+      }
+    }
+
+
+    console.log('Faturamento médio: R$',faturamento_medio,
+                '\nMenor valor de faturamento no mês: R$',menor_valor_mensal,
+               '\nMaior valor de faturamento do mês: R$', maior_valor_mensal,
+               '\nDias do mês com faturamento acima da média: ',dias_acima_do_fat_medio);
+  }
+
+</script>
+
+</html>
